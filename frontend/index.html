@@ -159,6 +159,8 @@ document.addEventListener('DOMContentLoaded', () =>{
 
 </script>
 <script>
+const PROJECT_ID = 'ee6081d44f535b82b71aa2003badb2b7'; // AppKit project ID — wired for BOT Chain 677
+
 let mode='s',bps=780,shares=250,rate=1.0342,rewards=8.64,TOT=1000;
 const f=(n,d=2)=>(+n).toFixed(d);
 function paint(){$('#rt').textContent=f(rate,4);$('#ap').textContent=f(bps/100)+'%';$('#rw').textContent=f(rewards);$('#vs').textContent=f(shares);
