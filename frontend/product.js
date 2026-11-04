@@ -24,6 +24,8 @@
   if(typeof value==='bigint'){
    if(/timestamp|deadline|expiry|startTime|endTime|paidUntil|stakedAt|lastUpdated|lastUpdate|lastCompound|UpdatedAt|cycleStarted/i.test(name)&&value>1000000000n&&value<100000000000n)return new Date(Number(value)*1000).toLocaleString();
    if(/bps$/i.test(name))return value.toString()+' basis points';
+   if(state.config.repo==='dynamic-nfts'&&/evolutionCost|collectedFees/i.test(name))return E.formatEther(value)+' BOT';
+   if(state.config.repo==='ringwood-vaults'&&/shares|sharesOf|totalShares/i.test(name))return E.formatEther(value)+' shares';
    if(['notch','fulcrum'].includes(state.config.repo)&&/price|strike/i.test(name))return E.formatEther(value)+' price units';
    if(state.config.repo==='ringwood-vaults'&&/balance|rewardReserve|totalCompounded/i.test(name))return E.formatEther(value)+' tokens';
    if(state.config.repo==='dca-bot'&&/tokenReserve|tokensPerBOT/i.test(name))return E.formatEther(value)+(name==='tokensPerBOT'?' tokens / BOT':' tokens');
@@ -57,7 +59,8 @@
   if(state.config?.address)$('#suite-address').append(addressLink(state.config.address));
   else $('#suite-address').textContent='Contract not deployed';
   $('#suite-actions-note').textContent=state.phase==='pending'?'Transactions will become available after a verified mainnet deployment.':state.config?.readOnlyReason||(!state.account?'Connect your wallet to use the available actions.':state.chain!==677?'Switch your wallet to BOT Chain mainnet (677).':'Inspect an existing record below to see the actions available to your wallet.');
-  const ready=state.phase==='ready'&&!!state.writer&&!!state.account&&state.chain===677&&!state.config?.readOnlyReason;
+  const ready=state.phase==='ready'&&!!state.writer&&!!state.account&&state.chain===677&&!state.config?.readOnlyReason&&!state.connecting;
+  document.querySelectorAll('.suite-action input,.suite-action select,.suite-action textarea,#suite-query,#suite-query-form input,#suite-query-form select,#suite-query-form button').forEach(n=>n.disabled=!!state.connecting);
   document.querySelectorAll('.suite-action button[type=submit],.suite-action button[data-requires-wallet]').forEach(b=>b.disabled=!ready||b.dataset.busy==='true');
  }
  function paramSpec(fn,p,index){
@@ -277,7 +280,9 @@
  async function refreshStats(){
   const host=$('#suite-stats');host.replaceChildren();
   if(state.phase!=='ready'){host.append(el('p','No live data is available.'));return;}
-  const funcs=state.config.abi.filter(f=>f.type==='function'&&['view','pure'].includes(f.stateMutability)&&!f.inputs.length&&f.name!=='owner'&&!/^[A-Z_]+$/.test(f.name));
+  // This deployed reputation version does not maintain the global ratingCount;
+  // per-profile totalRatings is authoritative and remains available in lookup.
+  const funcs=state.config.abi.filter(f=>f.type==='function'&&['view','pure'].includes(f.stateMutability)&&!f.inputs.length&&f.name!=='owner'&&!/^[A-Z_]+$/.test(f.name)&&!(state.config.repo==='standing'&&f.name==='ratingCount'));
   const generation=state.generation;
   const stats=await Promise.all(funcs.map(async f=>{try{return {fn:f,value:await read(f.name)}}catch{return null;}}));
   if(generation!==state.generation)return;
@@ -296,7 +301,7 @@
   await renderActions();readForms();paint();
  }
  async function connect(){
-  const button=$('#suite-wallet');button.disabled=true;
+  const button=$('#suite-wallet');button.disabled=true;state.connecting=true;paint();
   try{
    if(!window.ethereum)throw new Error('Open this page in a wallet browser or install an Ethereum-compatible browser wallet.');
    state.wallet=window.ethereum;
@@ -307,7 +312,7 @@
    }
    if(!state.listening&&state.wallet.on){state.wallet.on('accountsChanged',()=>attachAccount().catch(e=>status(errorText(e),true)));state.wallet.on('chainChanged',()=>attachAccount().catch(e=>status(errorText(e),true)));state.listening=true;}
    await attachAccount();status('Wallet connected. Review each transaction before signing.');
-  }catch(e){status(errorText(e),true);await attachAccount().catch(()=>{});}finally{button.disabled=false;}
+  }catch(e){status(errorText(e),true);await attachAccount().catch(()=>{});}finally{state.connecting=false;button.disabled=false;paint();}
  }
  async function boot(){
   $('#suite-wallet').disabled=true;

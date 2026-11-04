@@ -4,7 +4,7 @@ Deposit BOT, inspect your stake, and withdraw under the contract’s reward rule
 
 ## Mainnet status
 
-Mainnet deployment is pending. The interface does not simulate transactions or balances.
+Contract on BOT Chain mainnet (677): [0x26b5E400F5dce05674C60C9F04480536396DbF2a](https://scan.botchain.ai/address/0x26b5E400F5dce05674C60C9F04480536396DbF2a).
 
 Wallet actions require BOT Chain mainnet, deployed bytecode, and a connected compatible wallet. Every action is simulated before a transaction review; only a subsequent wallet confirmation can send it.
 
@@ -19,13 +19,16 @@ Wallet actions require BOT Chain mainnet, deployed bytecode, and a connected com
 
 ## Contract interface
 
-`frontend/product.json` uses the ABI compiled from the current Solidity source.
+`frontend/product.json` uses the current-source ABI, matched against the deployed mainnet runtime bytecode. Explorer source publication is tracked separately.
 
 | Action | Contract signature |
 |---|---|
+| Approve a token allowance | `approve(address,uint256)` |
+| Fund rewards (owner only) | `fundRewards()` |
 | Stake BOT | `stake(uint256)` |
+| Transfer tokens | `transfer(address,uint256)` |
+| Transfer approved tokens | `transferFrom(address,address,uint256)` |
 | Withdraw your stake | `unstake()` |
-| Set the reward rate (owner only) | `updateRewardRate(uint256)` |
 
 ## Run locally
 

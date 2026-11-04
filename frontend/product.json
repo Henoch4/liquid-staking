@@ -1,9 +1,9 @@
 {
-  "abiSource": "pending-current-source",
+  "abiSource": "runtime-matched-current-source",
   "repo": "tidewell",
   "brand": "Tidewell",
   "summary": "Deposit BOT, inspect your stake, and withdraw under the contract’s reward rules.",
-  "address": null,
+  "address": "0x26b5E400F5dce05674C60C9F04480536396DbF2a",
   "owner": null,
   "abi": [
     {
