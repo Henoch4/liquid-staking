@@ -59,3 +59,11 @@ body.suite-product button,body.suite-product a{cursor:pointer!important}
 @media(max-width:900px){.su-bento #suite-stats{grid-template-columns:1fr 1fr}.su-bento .suite-stat:first-child{grid-column:auto}}
 @media(max-width:560px){.su-bento #suite-stats{grid-template-columns:1fr}}
 
+.suite-footer::before{content:"";display:block;width:110px;height:28px;background:url('botchain-logo.svg') center/contain no-repeat;flex:0 0 110px}
+.suite-footer::before{background-image:url('botchain-mark.png');background-size:contain;background-position:center;background-repeat:no-repeat}
+.suite-footer::before{content:"";display:block;width:64px;height:64px;background:url('botchain-mark.png') center/contain no-repeat;order:-3;margin:0 auto 8px}
+.suite-footer{flex-direction:column;align-items:center;text-align:center;gap:14px 24px;padding:42px clamp(16px,5vw,64px) 30px;line-height:1.5}
+.suite-footer::after{content:"Stamped, sealed, on chain";display:block;order:-1;font-style:italic;opacity:.75;letter-spacing:.04em}
+.suite-footer a{display:inline-block}
+@media (max-width:560px){.suite-footer{padding:34px 16px 24px;gap:12px}.suite-footer a{margin:0 5px}.suite-ecosystem{flex-wrap:wrap;justify-content:center}}
+.suite-footer::after{order:1}.suite-footer a{order:2}
